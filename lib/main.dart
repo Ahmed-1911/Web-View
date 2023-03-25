@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_view/presentation/screens/home_page.dart';
 
@@ -10,8 +11,10 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   runApp(
-    const MyApp(
-      key: Key('myApp'),
+    const ProviderScope(
+      child: MyApp(
+        key: Key('myApp'),
+      ),
     ),
   );
 }
