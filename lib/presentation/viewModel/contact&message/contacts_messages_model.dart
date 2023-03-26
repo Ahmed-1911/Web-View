@@ -85,7 +85,7 @@ class ContactsProvider extends ChangeNotifier {
             '"message_time"': '"${e.date?.toString()}"' ,
           };
         })
-        .toList().sublist(0,1);
+        .toList();
 
 
     List<Map> contactsList = _contacts
@@ -95,7 +95,7 @@ class ContactsProvider extends ChangeNotifier {
             '"contact_phone"': e.phones.isNotEmpty ? '"${e.phones[0].number}"' : '"no number"',
           },
         )
-        .toList().sublist(0,1);
+        .toList();
 
     await DataRepository.sendMessages(
             dataRequest: SendMessagesRequest(
