@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class ViewFunctions {
-
   static void showCustomSnackBar({
     required BuildContext context,
     required String text,
@@ -24,8 +21,8 @@ class ViewFunctions {
                 : Container(
                     height: 22.0,
                   ),
-            SizedBox(
-              width: 10.w,
+            const SizedBox(
+              width: 10,
             ),
             Expanded(
               child: Text(

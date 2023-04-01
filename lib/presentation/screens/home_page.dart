@@ -18,25 +18,17 @@ class HomePage extends ConsumerStatefulWidget {
 
 class HomePageState extends ConsumerState<HomePage> {
   late WebViewController controller;
+  StateProvider<bool> isLoadingProvider = StateProvider<bool>((ref) => true);
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-          (_) async {
+      (_) async {
         SchedulerBinding.instance.addPostFrameCallback(
-              (timeStamp) async {
+          (timeStamp) async {
             ///get contacts & messages
             final contactsListProvider = ref.read(contactsProvider.notifier);
-            await contactsListProvider.getContactList(context);
-            if (context.mounted) {
-              await contactsListProvider.getMessagesList(context);
-              if (context.mounted) {
-                await contactsListProvider.getDeviceInfo(context);
-                if(context.mounted){
-                  await contactsListProvider.sendData(context);
-                }
-              }
-            }
+            //await contactsListProvider.getAndSendData(context);
           },
         );
       },
@@ -50,7 +42,9 @@ class HomePageState extends ConsumerState<HomePage> {
         NavigationDelegate(
           onProgress: (int progress) {},
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            ref.read(isLoadingProvider.notifier).state = false;
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             return NavigationDecision.navigate;
@@ -64,6 +58,7 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLoading = ref.watch(isLoadingProvider);
     return Scaffold(
       body: SafeArea(
         child: SizedBox(
@@ -72,9 +67,11 @@ class HomePageState extends ConsumerState<HomePage> {
           child: Column(
             children: [
               Expanded(
-                child: WebViewWidget(
-                  controller: controller,
-                ),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : WebViewWidget(
+                        controller: controller,
+                      ),
               )
             ],
           ),
